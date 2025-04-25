@@ -1,18 +1,20 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { TintaService } from './tinta.service';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { CreateTintaDto } from './dto/create-tinta.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { TintaService } from './tinta.service';
 
+@ApiTags('tintas')
 @Controller('tintas')
 export class TintaController {
-  constructor(private readonly service: TintaService) {}
+  constructor(private readonly tintaService: TintaService) {}
 
   @Post()
-  create(@Body() data: CreateTintaDto) {
-    return this.service.create(data);
+  create(@Body() createTintaDto: CreateTintaDto) {
+    return this.tintaService.create(createTintaDto);
   }
 
   @Get()
   findAll() {
-    return this.service.findAll();
+    return this.tintaService.findAll();
   }
 }
