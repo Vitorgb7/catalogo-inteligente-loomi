@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tinta {
+  id          String   @id @default(uuid())
+  nome        String
+  cor         String
+  superficie  String
+  ambiente    String
+  acabamento  String
+  features    String[]
+  linha       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
