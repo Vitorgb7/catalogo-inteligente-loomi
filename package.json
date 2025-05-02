@@ -20,8 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@huggingface/inference": "^3.9.2",
     "@huggingface/transformers": "^3.5.0",
+    "@langchain/openai": "^0.5.10",
     "@nestjs/axios": "^4.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -36,6 +36,8 @@
     "csv-parse": "^5.6.0",
     "csv-parser": "^3.2.0",
     "fs": "^0.0.1-security",
+    "ioredis": "^5.6.1",
+    "langchain": "^0.3.24",
     "openai": "^4.96.0",
     "qdrant-client": "^0.0.1",
     "reflect-metadata": "^0.2.2",

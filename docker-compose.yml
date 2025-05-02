@@ -15,7 +15,14 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-  
+
+  redis:
+    image: redis:7
+    container_name: suvinil_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
   qdrant:
     image: qdrant/qdrant
     container_name: qdrant
