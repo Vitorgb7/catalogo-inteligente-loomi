@@ -1,45 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { QdrantClient } from '@qdrant/js-client-rest';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class QdrantService {
-  private readonly qdrant: QdrantClient;
+export class QdrantService implements OnModuleInit {
+  private readonly client: QdrantClient;
   private readonly collectionName = 'tintas_suvinil';
 
   constructor() {
-    this.qdrant = new QdrantClient({
-      url: process.env.QDRANT_URL || 'http://localhost:6333',
+    this.client = new QdrantClient({
+      url: 'http://localhost:6333',
     });
-
-    console.log('⚙️ Qdrant client inicializado.');
+    console.log('Qdrant client inicializado.');
   }
 
-  async upsert(
-    data: { content: string; embedding: number[] }[],
-  ): Promise<void> {
-    console.log(`📝 Upsert no Qdrant com ${data.length} itens...`);
-    await this.qdrant.upsert(this.collectionName, {
-      points: data.map((item) => ({
-        id: uuidv4(),
+  async onModuleInit() {
+    await this.createCollection();
+  }
+
+  async createCollection() {
+    const exists = await this.client.getCollections();
+    const alreadyExists = exists.collections.some(
+      (c) => c.name === this.collectionName,
+    );
+
+    if (!alreadyExists) {
+      console.log(`Criando a coleção '${this.collectionName}' no Qdrant`);
+      await this.client.createCollection(this.collectionName, {
+        vectors: {
+          size: 1536, 
+          distance: 'Cosine',
+        },
+      });
+      console.log('Coleção criada com sucesso.');
+    } else {
+      console.log(`A coleção '${this.collectionName}' já existe.`);
+    }
+  }
+
+  async upsert(payload: { content: string; embedding: number[] }[]) {
+    console.log(`Upsert no Qdrant com ${payload.length} itens`);
+
+    await this.client.upsert(this.collectionName, {
+      points: payload.map((item, i) => ({
+        id: Date.now() + i,
         vector: item.embedding,
         payload: { content: item.content },
       })),
     });
-    console.log('✅ Dados inseridos no Qdrant com sucesso.');
   }
 
-  async search(vector: number[], topK = 3): Promise<string[]> {
-    console.log(`🔎 Realizando busca por similaridade no Qdrant (top ${topK})...`);
-    const result = await this.qdrant.search(this.collectionName, {
-      vector,
+  async search(embedding: number[], topK: number): Promise<string[]> {
+    const result = await this.client.search(this.collectionName, {
+      vector: embedding,
       limit: topK,
+      with_payload: true,
     });
 
-    const respostas = result
-      .map((r) => r.payload?.content)
-      .filter((content): content is string => typeof content === 'string');
-    console.log(`🔁 ${respostas.length} resultados retornados do Qdrant.`);
-    return respostas;
+    return result.map((r) => r.payload?.content as string);
   }
 }
