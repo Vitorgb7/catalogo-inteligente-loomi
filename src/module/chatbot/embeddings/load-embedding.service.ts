@@ -17,7 +17,7 @@ export class LoadEmbeddingsService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    console.log('🔄 Iniciando carregamento dos embeddings do CSV...');
+    console.log('iniciando carregamento dos embeddings do CSV');
     const csvRows: string[] = [];
 
     await new Promise<void>((resolve) => {
@@ -28,7 +28,7 @@ export class LoadEmbeddingsService implements OnModuleInit {
           csvRows.push(content);
         })
         .on('end', () => {
-          console.log(`📄 Total de linhas do CSV carregadas: ${csvRows.length}`);
+          console.log(`Total de linhas do csv carregadas: ${csvRows.length}`);
           resolve();
         });
     });
@@ -36,7 +36,7 @@ export class LoadEmbeddingsService implements OnModuleInit {
     const batchSize = 10;
     for (let i = 0; i < csvRows.length; i += batchSize) {
       const chunk = csvRows.slice(i, i + batchSize);
-      console.log(`🧠 Gerando embeddings para batch ${i / batchSize + 1} com ${chunk.length} entradas...`);
+      console.log(`Gerando embeddings para batch ${i / batchSize + 1} com ${chunk.length} entradas`);
 
       const embeddingResponse = await this.openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -48,29 +48,27 @@ export class LoadEmbeddingsService implements OnModuleInit {
         embedding: embeddingResponse.data[idx].embedding,
       }));
 
-      console.log(`📦 Enviando batch ${i / batchSize + 1} para o Qdrant...`);
+      console.log(`Enviando batch ${i / batchSize + 1} para o Qdrant`);
       await this.qdrantService.upsert(payload);
     }
 
-    console.log('✅ Todos os embeddings foram gerados e salvos no Qdrant.');
+    console.log('Todos os embeddings foram gerados e salvos no Qdrant.');
   }
 
-  // Método para criar embeddings de um texto
   async createEmbedding(text: string): Promise<number[]> {
-    console.log('🧠 Gerando embedding para o texto fornecido...');
+    console.log('Gerando embedding para o texto fornecido');
     const embeddingResponse = await this.openai.embeddings.create({
       model: 'text-embedding-3-small',
       input: [text],
     });
-    console.log('✅ Embedding gerado com sucesso!');
+    console.log('Embedding gerado com sucesso!');
     return embeddingResponse.data[0].embedding;
   }
 
-  // Método para buscar contextos similares no Qdrant
   async searchSimilarContexts(userEmbedding: number[], topK = 3): Promise<string[]> {
-    console.log(`🔎 Buscando os ${topK} contextos mais similares...`);
+    console.log(`Buscando os ${topK} contextos mais similares`);
     const result = await this.qdrantService.search(userEmbedding, topK);
-    console.log(`🔁 Resultados encontrados: ${result.length}`);
+    console.log(`Resultados encontrados: ${result.length}`);
     return result;
   }
 }
