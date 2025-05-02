@@ -1,13 +1,11 @@
+// apps/api/src/app.module.ts
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TintaModule } from './module/tinta/tinta.module';
 import { ChatbotModule } from './module/chatbot/chatbot.module';
-
+import { QdrantService } from './module/chatbot/embeddings/qdrant.service';
 
 @Module({
   imports: [TintaModule, ChatbotModule],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [QdrantService],
 })
 export class AppModule {}
