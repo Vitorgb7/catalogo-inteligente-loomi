@@ -5,9 +5,10 @@ import { QdrantService } from './embeddings/qdrant.service';
 import { LoadEmbeddingsService } from './embeddings/load-embedding.service';
 import { AgenteService } from '../agente/agente.service';
 import { AgenteRecomendadorService } from '../agente/agente-recomendador.service';
+import { IntentInterpreterService } from './interpreter.service';
 
 @Module({
   controllers: [ChatbotController],
-  providers: [ChatbotService, QdrantService, LoadEmbeddingsService, AgenteService, AgenteRecomendadorService],
+  providers: [ChatbotService, QdrantService, LoadEmbeddingsService, AgenteService, AgenteRecomendadorService, IntentInterpreterService],
 })
 export class ChatbotModule {}
