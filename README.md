@@ -1,98 +1,133 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="https://loomi.digital/" target="blank">
+    <img src="https://media.licdn.com/dms/image/v2/C4D0BAQGwsGxOTrtcHw/company-logo_200_200/company-logo_200_200/0/1654903803329/loomi_digital_logo?e=1751500800&v=beta&t=NkGLY1OjbpF7JEUgWBtickYwma_eGy4jGfdYf2SbAHE" width="120" alt="Loomi Logo" />
+  </a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<h1 align="center">Catálogo Inteligente de Tintas com IA</h1>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+##  Descrição
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Este projeto foi desenvolvido como um desafio técnico para a Loomi Digital. O objetivo era implementar um serviço de chatbot com:
 
-## Project setup
+- Capacidade de gerar respostas textuais e por imagens com base em contexto previamente salvo.
+- Sistema de validação das respostas antes de retorná-las ao usuário.
+- Arquitetura escalável e bem estruturada com foco em boas práticas.
+
+A solução proposta foi construída com **NestJS**, aplicando princípios de **modularidade**, **injeção de dependência**, e um fluxo organizado para criação de embeddings, recuperação de contexto, agentes de validação de respostas e de recomendações.
+
+---
+
+## ⚙️ Instalação e Execução
+
+### 1. Subindo os serviços com Docker Compose
+
+Antes de iniciar a aplicação, certifique-se de que os serviços de banco de dados estejam em execução:
 
 ```bash
-$ npm install
+docker-compose up -d
 ```
 
-## Compile and run the project
+## Isso inicializa os seguintes serviços:
 
-```bash
-# development
-$ npm run start
+```
+Qdrant: Para vetorização e busca por similaridade.
 
-# watch mode
-$ npm run start:dev
+Redis: Para cache e validação.
 
-# production mode
-$ npm run start:prod
+PostgreSQL: Para armazenamento relacional dos dados.
 ```
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
+## Instalando dependências
+```
+npm install
+```
+## Inicializando a aplicação
+```
+npm run start
+```
+```
+npm run start:dev
+```
+```
+npm run start:prod
+```
+## Inicialização com Swagger (documentação da API)
+```
+npm start --filter api
+```
+O Swagger ficará disponível em: http://localhost:3000/api (ou porta configurada no ambiente)
 
-# e2e tests
-$ npm run test:e2e
+## Executando os testes
+O projeto já conta com testes automatizados. Para executá-los, use:
 
-# test coverage
-$ npm run test:cov
+```
+npm run test
 ```
 
-## Deployment
+--
+# 🔎 Como Funciona
+O fluxo do chatbot foi dividido em três partes principais:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Geração de Embeddings
+O texto inserido pelo usuário é transformado em vetores (embeddings) e comparado com vetores previamente armazenados no Qdrant, buscando contexto relevante.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Geração da Resposta
+Com base na pergunta e no contexto encontrado, o sistema gera uma resposta estruturada e coerente com a base.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+### Validação
+A resposta passa por uma etapa de verificação através de regras lógicas ou validação via Redis. Pode ser corrigida, rejeitada ou aprovada automaticamente.
+
+### Resposta Final
+A resposta validada é enviada ao usuário final.
+
+📁 Estrutura de Pastas
 ```
+src/
+├── module/
+│   ├── chatbot/
+│   │   ├── embeddings/      
+│   │   ├── dto/             
+│   │   ├── agente/          
+│   │   ├── data/            
+│   └── tinta/  
+│       ├── dto/
+│       ├── tinta.controller.ts
+│       ├── tinta.module.ts
+│       ├── tinta.service.ts
+│       ├── tinta.service.spec.ts
+│   └── agente/  
+│       ├── agente-recomendador.service.ts
+│       ├── agente.service.ts  
+│   ├── app.controller.ts
+│   ├── app.service.ts
+│   ├── app.module.ts
+│   ├── main.ts
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+```
+## Tecnologias Utilizadas
+Node.js
 
-## Resources
+NestJS
 
-Check out a few resources that may come in handy when working with NestJS:
+TypeScript
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Redis
 
-## Support
+PostgreSQL
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Qdrant
 
-## Stay in touch
+OpenIA
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Swagger
 
-## License
+Docker & Docker Compose
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Jest (para testes automatizados)
+
+# Conclusão
+O projeto apresenta uma base sólida para construção de assistentes inteligentes, permitindo fácil integração com múltiplos serviços e validações. Pode ser expandido para aplicações como catálogos inteligentes, recomendadores de produtos, atendimento automatizado, entre outros.
