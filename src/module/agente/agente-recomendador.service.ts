@@ -25,7 +25,7 @@ export class AgenteRecomendadorService {
       return 'Desculpe, não encontrei nenhuma tinta que corresponda aos critérios fornecidos.';
     }
 
-    return `Com base no que você descreveu, recomendo:\n\n` +
+    return `Olá, tudo bem? Bom, com base no que você descreveu, recomendo:\n\n` +
       tintas.map(t =>
         `• ${t.nome} — Cor: ${t.cor}, Acabamento: ${t.acabamento}, Ambiente: ${t.ambiente}, Superfície: ${t.superficie}, Linha: ${t.linha}.`
       ).join('\n');
